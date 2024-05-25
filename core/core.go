@@ -9,19 +9,19 @@
 // connections.
 package core
 
-//go:generate go run github.com/xtls/xray-core/common/errors/errorgen
+//go:generate go run github.com/amnezia-vpn/amnezia-xray-core/common/errors/errorgen
 
 import (
 	"fmt"
 	"runtime"
 
-	"github.com/xtls/xray-core/common/serial"
+	"github.com/amnezia-vpn/amnezia-xray-core/common/serial"
 )
 
 var (
 	Version_x byte = 1
 	Version_y byte = 8
-	Version_z byte = 11
+	Version_z byte = 12
 )
 
 var (
