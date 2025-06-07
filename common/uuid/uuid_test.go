@@ -3,9 +3,9 @@ package uuid_test
 import (
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
 	. "github.com/amnezia-vpn/amnezia-xray-core/common/uuid"
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestParseBytes(t *testing.T) {

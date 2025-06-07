@@ -8,11 +8,11 @@ import (
 	"io"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/buf"
 	. "github.com/amnezia-vpn/amnezia-xray-core/common/crypto"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/protocol"
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestAuthenticationReaderWriter(t *testing.T) {

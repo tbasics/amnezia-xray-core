@@ -4,8 +4,6 @@ import (
 	"context"
 	"os"
 
-	M "github.com/sagernet/sing/common/metadata"
-	N "github.com/sagernet/sing/common/network"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/net"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/net/cnc"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/session"
@@ -13,6 +11,8 @@ import (
 	"github.com/amnezia-vpn/amnezia-xray-core/transport"
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/internet"
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/pipe"
+	M "github.com/sagernet/sing/common/metadata"
+	N "github.com/sagernet/sing/common/network"
 )
 
 var _ N.Dialer = (*XrayDialer)(nil)

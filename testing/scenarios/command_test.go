@@ -8,8 +8,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/google/go-cmp/cmp"
-	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/amnezia-vpn/amnezia-xray-core/app/commander"
 	"github.com/amnezia-vpn/amnezia-xray-core/app/policy"
 	"github.com/amnezia-vpn/amnezia-xray-core/app/proxyman"
@@ -29,6 +27,8 @@ import (
 	"github.com/amnezia-vpn/amnezia-xray-core/proxy/vmess/inbound"
 	"github.com/amnezia-vpn/amnezia-xray-core/proxy/vmess/outbound"
 	"github.com/amnezia-vpn/amnezia-xray-core/testing/servers/tcp"
+	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/protobuf/testing/protocmp"

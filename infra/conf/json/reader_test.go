@@ -5,9 +5,9 @@ import (
 	"io"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
 	. "github.com/amnezia-vpn/amnezia-xray-core/infra/conf/json"
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestReader(t *testing.T) {

@@ -5,10 +5,10 @@ import (
 	"io"
 	"testing"
 
-	"github.com/golang/mock/gomock"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/buf"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/errors"
 	"github.com/amnezia-vpn/amnezia-xray-core/testing/mocks"
+	"github.com/golang/mock/gomock"
 )
 
 func TestReadError(t *testing.T) {

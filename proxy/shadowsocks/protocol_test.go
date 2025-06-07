@@ -3,12 +3,12 @@ package shadowsocks_test
 import (
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/buf"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/net"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/protocol"
 	. "github.com/amnezia-vpn/amnezia-xray-core/proxy/shadowsocks"
+	"github.com/google/go-cmp/cmp"
 )
 
 func toAccount(a *Account) protocol.Account {

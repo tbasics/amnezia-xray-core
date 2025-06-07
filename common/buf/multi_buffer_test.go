@@ -7,9 +7,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
 	. "github.com/amnezia-vpn/amnezia-xray-core/common/buf"
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestMultiBufferRead(t *testing.T) {

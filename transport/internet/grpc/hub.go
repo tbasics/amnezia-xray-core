@@ -4,7 +4,6 @@ import (
 	"context"
 	"time"
 
-	goreality "github.com/xtls/reality"
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/errors"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/net"
@@ -12,6 +11,7 @@ import (
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/internet/grpc/encoding"
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/internet/reality"
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/internet/tls"
+	goreality "github.com/xtls/reality"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/keepalive"

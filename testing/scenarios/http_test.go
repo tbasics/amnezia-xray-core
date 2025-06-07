@@ -11,7 +11,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/amnezia-vpn/amnezia-xray-core/app/proxyman"
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/buf"
@@ -22,6 +21,7 @@ import (
 	v2http "github.com/amnezia-vpn/amnezia-xray-core/proxy/http"
 	v2httptest "github.com/amnezia-vpn/amnezia-xray-core/testing/servers/http"
 	"github.com/amnezia-vpn/amnezia-xray-core/testing/servers/tcp"
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestHttpConformance(t *testing.T) {

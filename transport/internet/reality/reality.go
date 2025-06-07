@@ -23,13 +23,13 @@ import (
 	"time"
 	"unsafe"
 
-	utls "github.com/refraction-networking/utls"
-	"github.com/xtls/reality"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/crypto"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/errors"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/net"
 	"github.com/amnezia-vpn/amnezia-xray-core/core"
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/internet/tls"
+	utls "github.com/refraction-networking/utls"
+	"github.com/xtls/reality"
 	"golang.org/x/crypto/hkdf"
 	"golang.org/x/net/http2"
 )

@@ -8,7 +8,6 @@ import (
 	"time"
 	"unsafe"
 
-	utls "github.com/refraction-networking/utls"
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/buf"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/errors"
@@ -29,6 +28,7 @@ import (
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/internet/reality"
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/internet/stat"
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/internet/tls"
+	utls "github.com/refraction-networking/utls"
 )
 
 func init() {

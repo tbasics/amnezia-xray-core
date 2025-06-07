@@ -8,7 +8,6 @@ import (
 	gonet "net"
 	"time"
 
-	"github.com/gorilla/websocket"
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/errors"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/net"
@@ -16,6 +15,7 @@ import (
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/internet/browser_dialer"
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/internet/stat"
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/internet/tls"
+	"github.com/gorilla/websocket"
 )
 
 // Dial dials a WebSocket connection to the given destination.

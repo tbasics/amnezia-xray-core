@@ -4,11 +4,11 @@ import (
 	"context"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
-	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/amnezia-vpn/amnezia-xray-core/app/stats"
 	. "github.com/amnezia-vpn/amnezia-xray-core/app/stats/command"
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
+	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 )
 
 func TestGetStats(t *testing.T) {

@@ -7,12 +7,12 @@ import (
 	"encoding/binary"
 	"io"
 
-	"github.com/quic-go/quic-go/quicvarint"
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/buf"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/errors"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/protocol"
 	ptls "github.com/amnezia-vpn/amnezia-xray-core/common/protocol/tls"
+	"github.com/quic-go/quic-go/quicvarint"
 	"golang.org/x/crypto/hkdf"
 )
 

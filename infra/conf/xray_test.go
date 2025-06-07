@@ -5,7 +5,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/amnezia-vpn/amnezia-xray-core/app/dispatcher"
 	"github.com/amnezia-vpn/amnezia-xray-core/app/log"
 	"github.com/amnezia-vpn/amnezia-xray-core/app/proxyman"
@@ -22,6 +21,7 @@ import (
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/internet"
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/internet/tls"
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/internet/websocket"
+	"github.com/google/go-cmp/cmp"
 	"google.golang.org/protobuf/proto"
 )
 

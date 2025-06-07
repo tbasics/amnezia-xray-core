@@ -7,7 +7,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/amnezia-vpn/amnezia-xray-core/app/dispatcher"
 	"github.com/amnezia-vpn/amnezia-xray-core/app/proxyman"
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
@@ -17,6 +16,7 @@ import (
 	"github.com/amnezia-vpn/amnezia-xray-core/proxy/freedom"
 	"github.com/amnezia-vpn/amnezia-xray-core/testing/servers/tcp"
 	"github.com/amnezia-vpn/amnezia-xray-core/testing/servers/udp"
+	"github.com/google/go-cmp/cmp"
 	"google.golang.org/protobuf/proto"
 )
 

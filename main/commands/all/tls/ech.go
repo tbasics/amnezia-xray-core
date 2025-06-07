@@ -7,9 +7,9 @@ import (
 	"strings"
 
 	"github.com/OmarTariq612/goech"
-	"github.com/cloudflare/circl/hpke"
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
 	"github.com/amnezia-vpn/amnezia-xray-core/main/commands/base"
+	"github.com/cloudflare/circl/hpke"
 )
 
 var cmdECH = &base.Command{

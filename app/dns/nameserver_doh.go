@@ -12,7 +12,6 @@ import (
 	"strings"
 	"time"
 
-	utls "github.com/refraction-networking/utls"
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/crypto"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/errors"
@@ -24,6 +23,7 @@ import (
 	dns_feature "github.com/amnezia-vpn/amnezia-xray-core/features/dns"
 	"github.com/amnezia-vpn/amnezia-xray-core/features/routing"
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/internet"
+	utls "github.com/refraction-networking/utls"
 	"golang.org/x/net/http2"
 )
 

@@ -6,8 +6,9 @@ import (
 	"crypto/cipher"
 	"crypto/md5"
 	"crypto/sha1"
-	"google.golang.org/protobuf/proto"
 	"io"
+
+	"google.golang.org/protobuf/proto"
 
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/antireplay"

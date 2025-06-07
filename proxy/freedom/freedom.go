@@ -6,7 +6,6 @@ import (
 	"io"
 	"time"
 
-	"github.com/pires/go-proxyproto"
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/buf"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/crypto"
@@ -27,6 +26,7 @@ import (
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/internet"
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/internet/stat"
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/internet/tls"
+	"github.com/pires/go-proxyproto"
 )
 
 var useSplice bool

@@ -4,7 +4,6 @@ import (
 	"context"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/buf"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/net"
@@ -12,6 +11,7 @@ import (
 	"github.com/amnezia-vpn/amnezia-xray-core/common/uuid"
 	"github.com/amnezia-vpn/amnezia-xray-core/proxy/vmess"
 	. "github.com/amnezia-vpn/amnezia-xray-core/proxy/vmess/encoding"
+	"github.com/google/go-cmp/cmp"
 )
 
 func toAccount(a *vmess.Account) protocol.Account {

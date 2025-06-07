@@ -7,10 +7,10 @@ import (
 	"io"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
 	. "github.com/amnezia-vpn/amnezia-xray-core/common/buf"
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/pipe"
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestWriter(t *testing.T) {

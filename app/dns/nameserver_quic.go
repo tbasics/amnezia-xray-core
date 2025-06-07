@@ -9,7 +9,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/quic-go/quic-go"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/buf"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/errors"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/log"
@@ -18,6 +17,7 @@ import (
 	"github.com/amnezia-vpn/amnezia-xray-core/common/session"
 	dns_feature "github.com/amnezia-vpn/amnezia-xray-core/features/dns"
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/internet/tls"
+	"github.com/quic-go/quic-go"
 	"golang.org/x/net/http2"
 )
 

@@ -5,9 +5,9 @@ import (
 	"crypto/rand"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
 	. "github.com/amnezia-vpn/amnezia-xray-core/common/buf"
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestBufferClear(t *testing.T) {

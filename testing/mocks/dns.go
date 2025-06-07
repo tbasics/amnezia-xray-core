@@ -8,8 +8,8 @@ import (
 	net "net"
 	reflect "reflect"
 
-	gomock "github.com/golang/mock/gomock"
 	dns "github.com/amnezia-vpn/amnezia-xray-core/features/dns"
+	gomock "github.com/golang/mock/gomock"
 )
 
 // DNSClient is a mock of Client interface

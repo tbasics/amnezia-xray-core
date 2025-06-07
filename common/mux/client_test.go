@@ -5,7 +5,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/golang/mock/gomock"
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/errors"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/mux"
@@ -14,6 +13,7 @@ import (
 	"github.com/amnezia-vpn/amnezia-xray-core/testing/mocks"
 	"github.com/amnezia-vpn/amnezia-xray-core/transport"
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/pipe"
+	"github.com/golang/mock/gomock"
 )
 
 func TestIncrementalPickerFailure(t *testing.T) {

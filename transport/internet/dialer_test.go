@@ -4,11 +4,11 @@ import (
 	"context"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/net"
 	"github.com/amnezia-vpn/amnezia-xray-core/testing/servers/tcp"
 	. "github.com/amnezia-vpn/amnezia-xray-core/transport/internet"
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestDialWithLocalAddr(t *testing.T) {

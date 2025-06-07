@@ -4,8 +4,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/google/go-cmp/cmp"
-	"github.com/miekg/dns"
 	"github.com/amnezia-vpn/amnezia-xray-core/app/dispatcher"
 	. "github.com/amnezia-vpn/amnezia-xray-core/app/dns"
 	"github.com/amnezia-vpn/amnezia-xray-core/app/policy"
@@ -20,6 +18,8 @@ import (
 	feature_dns "github.com/amnezia-vpn/amnezia-xray-core/features/dns"
 	"github.com/amnezia-vpn/amnezia-xray-core/proxy/freedom"
 	"github.com/amnezia-vpn/amnezia-xray-core/testing/servers/udp"
+	"github.com/google/go-cmp/cmp"
+	"github.com/miekg/dns"
 )
 
 type staticHandler struct{}

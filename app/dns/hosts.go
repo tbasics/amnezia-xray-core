@@ -2,6 +2,7 @@ package dns
 
 import (
 	"context"
+
 	"github.com/amnezia-vpn/amnezia-xray-core/common/errors"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/net"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/strmatcher"

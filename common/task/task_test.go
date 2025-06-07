@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
 	. "github.com/amnezia-vpn/amnezia-xray-core/common/task"
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestExecuteParallel(t *testing.T) {

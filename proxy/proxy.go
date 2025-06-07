@@ -15,7 +15,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/pires/go-proxyproto"
 	"github.com/amnezia-vpn/amnezia-xray-core/app/dispatcher"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/buf"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/errors"
@@ -30,6 +29,7 @@ import (
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/internet/reality"
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/internet/stat"
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/internet/tls"
+	"github.com/pires/go-proxyproto"
 )
 
 var (

@@ -3,7 +3,6 @@ package encoding_test
 import (
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/buf"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/net"
@@ -11,6 +10,7 @@ import (
 	"github.com/amnezia-vpn/amnezia-xray-core/common/uuid"
 	"github.com/amnezia-vpn/amnezia-xray-core/proxy/vless"
 	. "github.com/amnezia-vpn/amnezia-xray-core/proxy/vless/encoding"
+	"github.com/google/go-cmp/cmp"
 )
 
 func toAccount(a *vless.Account) protocol.Account {
@@ -45,7 +45,7 @@ func TestRequestSerialization(t *testing.T) {
 	Validator := new(vless.MemoryValidator)
 	Validator.Add(user)
 
-	actualRequest, actualAddons, _, err := DecodeRequestHeader(false, nil, &buffer, Validator)
+	actualRequest, actualAddons, _, err := DecodeRequestHeader(false, nil, &buffer, Validator, func(uuid2 uuid.UUID) {})
 	common.Must(err)
 
 	if r := cmp.Diff(actualRequest, expectedRequest, cmp.AllowUnexported(protocol.ID{})); r != "" {
@@ -86,7 +86,7 @@ func TestInvalidRequest(t *testing.T) {
 	Validator := new(vless.MemoryValidator)
 	Validator.Add(user)
 
-	_, _, _, err := DecodeRequestHeader(false, nil, &buffer, Validator)
+	_, _, _, err := DecodeRequestHeader(false, nil, &buffer, Validator, func(uuid2 uuid.UUID) {})
 	if err == nil {
 		t.Error("nil error")
 	}
@@ -117,7 +117,7 @@ func TestMuxRequest(t *testing.T) {
 	Validator := new(vless.MemoryValidator)
 	Validator.Add(user)
 
-	actualRequest, actualAddons, _, err := DecodeRequestHeader(false, nil, &buffer, Validator)
+	actualRequest, actualAddons, _, err := DecodeRequestHeader(false, nil, &buffer, Validator, func(uuid2 uuid.UUID) {})
 	common.Must(err)
 
 	if r := cmp.Diff(actualRequest, expectedRequest, cmp.AllowUnexported(protocol.ID{})); r != "" {

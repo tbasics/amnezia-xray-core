@@ -6,11 +6,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/google/go-cmp/cmp"
 	. "github.com/amnezia-vpn/amnezia-xray-core/app/dns"
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/net"
 	dns_feature "github.com/amnezia-vpn/amnezia-xray-core/features/dns"
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestTCPLocalNameServer(t *testing.T) {

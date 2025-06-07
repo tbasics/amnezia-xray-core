@@ -6,10 +6,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/net"
 	. "github.com/amnezia-vpn/amnezia-xray-core/common/protocol/http"
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestParseXForwardedFor(t *testing.T) {

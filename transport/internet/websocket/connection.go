@@ -5,10 +5,10 @@ import (
 	"net"
 	"time"
 
-	"github.com/gorilla/websocket"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/buf"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/errors"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/serial"
+	"github.com/gorilla/websocket"
 )
 
 var _ buf.Writer = (*connection)(nil)

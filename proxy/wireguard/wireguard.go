@@ -9,8 +9,10 @@ import (
 
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/log"
-	"golang.zx2c4.com/wireguard/device"
+	"github.com/amnezia-vpn/amneziawg-go/device"
 )
+
+//go:generate go run github.com/amnezia-vpn/amnezia-xray-core/common/errors/errorgen
 
 var wgLogger = &device.Logger{
 	Verbosef: func(format string, args ...any) {

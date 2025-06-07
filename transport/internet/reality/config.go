@@ -7,9 +7,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/xtls/reality"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/errors"
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/internet"
+	"github.com/xtls/reality"
 )
 
 func (c *Config) GetREALITYConfig() *reality.Config {

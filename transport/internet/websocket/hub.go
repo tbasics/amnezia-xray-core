@@ -11,13 +11,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gorilla/websocket"
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/errors"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/net"
 	http_proto "github.com/amnezia-vpn/amnezia-xray-core/common/protocol/http"
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/internet"
 	v2tls "github.com/amnezia-vpn/amnezia-xray-core/transport/internet/tls"
+	"github.com/gorilla/websocket"
 )
 
 type requestHandler struct {

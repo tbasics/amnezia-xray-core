@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/sagernet/sing-shadowsocks/shadowaead_2022"
 	"github.com/amnezia-vpn/amnezia-xray-core/app/log"
 	"github.com/amnezia-vpn/amnezia-xray-core/app/proxyman"
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
@@ -19,6 +18,7 @@ import (
 	"github.com/amnezia-vpn/amnezia-xray-core/proxy/shadowsocks_2022"
 	"github.com/amnezia-vpn/amnezia-xray-core/testing/servers/tcp"
 	"github.com/amnezia-vpn/amnezia-xray-core/testing/servers/udp"
+	"github.com/sagernet/sing-shadowsocks/shadowaead_2022"
 	"golang.org/x/sync/errgroup"
 )
 

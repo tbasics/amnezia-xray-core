@@ -4,7 +4,6 @@ import (
 	"context"
 	"testing"
 
-	"github.com/golang/mock/gomock"
 	. "github.com/amnezia-vpn/amnezia-xray-core/app/router"
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/net"
@@ -13,6 +12,7 @@ import (
 	"github.com/amnezia-vpn/amnezia-xray-core/features/outbound"
 	routing_session "github.com/amnezia-vpn/amnezia-xray-core/features/routing/session"
 	"github.com/amnezia-vpn/amnezia-xray-core/testing/mocks"
+	"github.com/golang/mock/gomock"
 )
 
 type mockOutboundManager struct {

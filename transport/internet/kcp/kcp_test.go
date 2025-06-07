@@ -7,13 +7,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/errors"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/net"
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/internet"
 	. "github.com/amnezia-vpn/amnezia-xray-core/transport/internet/kcp"
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/internet/stat"
+	"github.com/google/go-cmp/cmp"
 	"golang.org/x/sync/errgroup"
 )
 

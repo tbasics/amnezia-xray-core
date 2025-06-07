@@ -3,9 +3,9 @@ package kcp_test
 import (
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
 	. "github.com/amnezia-vpn/amnezia-xray-core/transport/internet/kcp"
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestSimpleAuthenticator(t *testing.T) {

@@ -3,8 +3,8 @@ package singbridge
 import (
 	"context"
 
-	"github.com/sagernet/sing/common/logger"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/errors"
+	"github.com/sagernet/sing/common/logger"
 )
 
 var _ logger.ContextLogger = (*XrayLogger)(nil)

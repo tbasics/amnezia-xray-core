@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	goreality "github.com/xtls/reality"
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/errors"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/net"
@@ -14,6 +13,7 @@ import (
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/internet/reality"
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/internet/stat"
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/internet/tls"
+	goreality "github.com/xtls/reality"
 )
 
 // Listener is an internet.Listener that listens for TCP connections.

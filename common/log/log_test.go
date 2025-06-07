@@ -3,9 +3,9 @@ package log_test
 import (
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/log"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/net"
+	"github.com/google/go-cmp/cmp"
 )
 
 type testLogger struct {
