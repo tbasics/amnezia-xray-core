@@ -1,7 +1,5 @@
 package outbound
 
-//go:generate go run github.com/amnezia-vpn/amnezia-xray-core/common/errors/errorgen
-
 import (
 	"context"
 	"sort"
@@ -115,7 +113,7 @@ func (m *Manager) AddHandler(ctx context.Context, handler outbound.Handler) erro
 	tag := handler.Tag()
 	if len(tag) > 0 {
 		if _, found := m.taggedHandler[tag]; found {
-			return newError("existing tag found: " + tag)
+			return errors.New("existing tag found: " + tag)
 		}
 		m.taggedHandler[tag] = handler
 	} else {
@@ -145,6 +143,21 @@ func (m *Manager) RemoveHandler(ctx context.Context, tag string) error {
 	}
 
 	return nil
+}
+
+// ListHandlers implements outbound.Manager.
+func (m *Manager) ListHandlers(ctx context.Context) []outbound.Handler {
+	m.access.RLock()
+	defer m.access.RUnlock()
+
+	var response []outbound.Handler
+	copy(m.untaggedHandlers, response)
+
+	for _, v := range m.taggedHandler {
+		response = append(response, v)
+	}
+
+	return response
 }
 
 // Select implements outbound.HandlerSelector.

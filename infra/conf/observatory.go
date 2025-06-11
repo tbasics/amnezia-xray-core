@@ -5,6 +5,7 @@ import (
 
 	"github.com/amnezia-vpn/amnezia-xray-core/app/observatory"
 	"github.com/amnezia-vpn/amnezia-xray-core/app/observatory/burst"
+	"github.com/amnezia-vpn/amnezia-xray-core/common/errors"
 	"github.com/amnezia-vpn/amnezia-xray-core/infra/conf/cfgcommon/duration"
 )
 
@@ -26,6 +27,9 @@ type BurstObservatoryConfig struct {
 }
 
 func (b BurstObservatoryConfig) Build() (proto.Message, error) {
+	if b.HealthCheck == nil {
+		return nil, errors.New("BurstObservatory requires a valid pingConfig")
+	}
 	if result, err := b.HealthCheck.Build(); err == nil {
 		return &burst.Config{SubjectSelector: b.SubjectSelector, PingConfig: result.(*burst.HealthPingConfig)}, nil
 	} else {

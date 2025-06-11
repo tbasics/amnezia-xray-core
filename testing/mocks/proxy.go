@@ -8,12 +8,12 @@ import (
 	context "context"
 	reflect "reflect"
 
+	gomock "github.com/golang/mock/gomock"
 	net "github.com/amnezia-vpn/amnezia-xray-core/common/net"
 	routing "github.com/amnezia-vpn/amnezia-xray-core/features/routing"
 	transport "github.com/amnezia-vpn/amnezia-xray-core/transport"
 	internet "github.com/amnezia-vpn/amnezia-xray-core/transport/internet"
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/internet/stat"
-	gomock "github.com/golang/mock/gomock"
 )
 
 // ProxyInbound is a mock of Inbound interface

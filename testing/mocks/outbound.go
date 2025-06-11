@@ -8,8 +8,8 @@ import (
 	context "context"
 	reflect "reflect"
 
-	outbound "github.com/amnezia-vpn/amnezia-xray-core/features/outbound"
 	gomock "github.com/golang/mock/gomock"
+	outbound "github.com/amnezia-vpn/amnezia-xray-core/features/outbound"
 )
 
 // OutboundManager is a mock of Manager interface
@@ -89,6 +89,20 @@ func (m *OutboundManager) GetHandler(arg0 string) outbound.Handler {
 func (mr *OutboundManagerMockRecorder) GetHandler(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHandler", reflect.TypeOf((*OutboundManager)(nil).GetHandler), arg0)
+}
+
+// ListHandlers mocks base method
+func (m *OutboundManager) ListHandlers(arg0 context.Context) []outbound.Handler {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListHandlers", arg0)
+	ret0, _ := ret[0].([]outbound.Handler)
+	return ret0
+}
+
+// ListHandlers indicates an expected call of ListHandlers
+func (mr *OutboundManagerMockRecorder) ListHandlers(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListHandlers", reflect.TypeOf((*OutboundManager)(nil).ListHandlers), arg0)
 }
 
 // RemoveHandler mocks base method

@@ -9,11 +9,13 @@ import (
 	"github.com/amnezia-vpn/amnezia-xray-core/common/errors"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/mux"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/net"
+	"github.com/amnezia-vpn/amnezia-xray-core/common/serial"
 	"github.com/amnezia-vpn/amnezia-xray-core/core"
 	"github.com/amnezia-vpn/amnezia-xray-core/features/policy"
 	"github.com/amnezia-vpn/amnezia-xray-core/features/stats"
 	"github.com/amnezia-vpn/amnezia-xray-core/proxy"
 	"github.com/amnezia-vpn/amnezia-xray-core/transport/internet"
+	"google.golang.org/protobuf/proto"
 )
 
 func getStatCounter(v *core.Instance, tag string) (stats.Counter, stats.Counter) {
@@ -42,10 +44,12 @@ func getStatCounter(v *core.Instance, tag string) (stats.Counter, stats.Counter)
 }
 
 type AlwaysOnInboundHandler struct {
-	proxy   proxy.Inbound
-	workers []worker
-	mux     *mux.Server
-	tag     string
+	proxyConfig    interface{}
+	receiverConfig *proxyman.ReceiverConfig
+	proxy          proxy.Inbound
+	workers        []worker
+	mux            *mux.Server
+	tag            string
 }
 
 func NewAlwaysOnInboundHandler(ctx context.Context, tag string, receiverConfig *proxyman.ReceiverConfig, proxyConfig interface{}) (*AlwaysOnInboundHandler, error) {
@@ -55,13 +59,15 @@ func NewAlwaysOnInboundHandler(ctx context.Context, tag string, receiverConfig *
 	}
 	p, ok := rawProxy.(proxy.Inbound)
 	if !ok {
-		return nil, newError("not an inbound proxy.")
+		return nil, errors.New("not an inbound proxy.")
 	}
 
 	h := &AlwaysOnInboundHandler{
-		proxy: p,
-		mux:   mux.NewServer(ctx),
-		tag:   tag,
+		receiverConfig: receiverConfig,
+		proxyConfig:    proxyConfig,
+		proxy:          p,
+		mux:            mux.NewServer(ctx),
+		tag:            tag,
 	}
 
 	uplinkCounter, downlinkCounter := getStatCounter(core.MustFromContext(ctx), tag)
@@ -75,7 +81,7 @@ func NewAlwaysOnInboundHandler(ctx context.Context, tag string, receiverConfig *
 
 	mss, err := internet.ToMemoryStreamConfig(receiverConfig.StreamSettings)
 	if err != nil {
-		return nil, newError("failed to parse stream config").Base(err).AtWarning()
+		return nil, errors.New("failed to parse stream config").Base(err).AtWarning()
 	}
 
 	if receiverConfig.ReceiveOriginalDestination {
@@ -89,7 +95,7 @@ func NewAlwaysOnInboundHandler(ctx context.Context, tag string, receiverConfig *
 	}
 	if pl == nil {
 		if net.HasNetwork(nl, net.Network_UNIX) {
-			newError("creating unix domain socket worker on ", address).AtDebug().WriteToLog()
+			errors.LogDebug(ctx, "creating unix domain socket worker on ", address)
 
 			worker := &dsWorker{
 				address:         address,
@@ -109,7 +115,7 @@ func NewAlwaysOnInboundHandler(ctx context.Context, tag string, receiverConfig *
 		for _, pr := range pl.Range {
 			for port := pr.From; port <= pr.To; port++ {
 				if net.HasNetwork(nl, net.Network_TCP) {
-					newError("creating stream worker on ", address, ":", port).AtDebug().WriteToLog()
+					errors.LogDebug(ctx, "creating stream worker on ", address, ":", port)
 
 					worker := &tcpWorker{
 						address:         address,
@@ -167,7 +173,7 @@ func (h *AlwaysOnInboundHandler) Close() error {
 	}
 	errs = append(errs, h.mux.Close())
 	if err := errors.Combine(errs...); err != nil {
-		return newError("failed to close all resources").Base(err)
+		return errors.New("failed to close all resources").Base(err)
 	}
 	return nil
 }
@@ -186,4 +192,17 @@ func (h *AlwaysOnInboundHandler) Tag() string {
 
 func (h *AlwaysOnInboundHandler) GetInbound() proxy.Inbound {
 	return h.proxy
+}
+
+// ReceiverSettings implements inbound.Handler.
+func (h *AlwaysOnInboundHandler) ReceiverSettings() *serial.TypedMessage {
+	return serial.ToTypedMessage(h.receiverConfig)
+}
+
+// ProxySettings implements inbound.Handler.
+func (h *AlwaysOnInboundHandler) ProxySettings() *serial.TypedMessage {
+	if v, ok := h.proxyConfig.(proto.Message); ok {
+		return serial.ToTypedMessage(v)
+	}
+	return nil
 }

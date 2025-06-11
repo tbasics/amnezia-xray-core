@@ -1,12 +1,11 @@
 package encoding
 
-//go:generate go run github.com/amnezia-vpn/amnezia-xray-core/common/errors/errorgen
-
 import (
 	"bytes"
 	"context"
-	"github.com/amnezia-vpn/amnezia-xray-core/common/uuid"
 	"io"
+
+	"github.com/amnezia-vpn/amnezia-xray-core/common/uuid"
 
 	"github.com/amnezia-vpn/amnezia-xray-core/common/buf"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/errors"
@@ -36,36 +35,36 @@ func EncodeRequestHeader(writer io.Writer, request *protocol.RequestHeader, requ
 	defer buffer.Release()
 
 	if err := buffer.WriteByte(request.Version); err != nil {
-		return newError("failed to write request version").Base(err)
+		return errors.New("failed to write request version").Base(err)
 	}
 
 	if _, err := buffer.Write(request.User.Account.(*vless.MemoryAccount).ID.Bytes()); err != nil {
-		return newError("failed to write request user id").Base(err)
+		return errors.New("failed to write request user id").Base(err)
 	}
 
 	if err := EncodeHeaderAddons(&buffer, requestAddons); err != nil {
-		return newError("failed to encode request header addons").Base(err)
+		return errors.New("failed to encode request header addons").Base(err)
 	}
 
 	if err := buffer.WriteByte(byte(request.Command)); err != nil {
-		return newError("failed to write request command").Base(err)
+		return errors.New("failed to write request command").Base(err)
 	}
 
 	if request.Command != protocol.RequestCommandMux {
 		if err := addrParser.WriteAddressPort(&buffer, request.Address, request.Port); err != nil {
-			return newError("failed to write request address and port").Base(err)
+			return errors.New("failed to write request address and port").Base(err)
 		}
 	}
 
 	if _, err := writer.Write(buffer.Bytes()); err != nil {
-		return newError("failed to write request header").Base(err)
+		return errors.New("failed to write request header").Base(err)
 	}
 
 	return nil
 }
 
 // DecodeRequestHeader decodes and returns (if successful) a RequestHeader from an input stream.
-func DecodeRequestHeader(isfb bool, first *buf.Buffer, reader io.Reader, validator *vless.Validator, invalidUserIdCallback func(userId uuid.UUID)) (*protocol.RequestHeader, *Addons, bool, error) {
+func DecodeRequestHeader(isfb bool, first *buf.Buffer, reader io.Reader, validator vless.Validator, invalidUserIdCallback func(userId uuid.UUID)) (*protocol.RequestHeader, *Addons, bool, error) {
 	buffer := buf.StackNew()
 	defer buffer.Release()
 
@@ -75,7 +74,7 @@ func DecodeRequestHeader(isfb bool, first *buf.Buffer, reader io.Reader, validat
 		request.Version = first.Byte(0)
 	} else {
 		if _, err := buffer.ReadFullFrom(reader, 1); err != nil {
-			return nil, nil, false, newError("failed to read request version").Base(err)
+			return nil, nil, false, errors.New("failed to read request version").Base(err)
 		}
 		request.Version = buffer.Byte(0)
 	}
@@ -90,14 +89,14 @@ func DecodeRequestHeader(isfb bool, first *buf.Buffer, reader io.Reader, validat
 		} else {
 			buffer.Clear()
 			if _, err := buffer.ReadFullFrom(reader, 16); err != nil {
-				return nil, nil, false, newError("failed to read request user id").Base(err)
+				return nil, nil, false, errors.New("failed to read request user id").Base(err)
 			}
 			copy(id[:], buffer.Bytes())
 		}
 
 		if request.User = validator.Get(id); request.User == nil {
 			invalidUserIdCallback(id)
-			return nil, nil, isfb, newError("invalid request user id")
+			return nil, nil, isfb, errors.New("invalid request user id")
 		}
 
 		if isfb {
@@ -106,12 +105,12 @@ func DecodeRequestHeader(isfb bool, first *buf.Buffer, reader io.Reader, validat
 
 		requestAddons, err := DecodeHeaderAddons(&buffer, reader)
 		if err != nil {
-			return nil, nil, false, newError("failed to decode request header addons").Base(err)
+			return nil, nil, false, errors.New("failed to decode request header addons").Base(err)
 		}
 
 		buffer.Clear()
 		if _, err := buffer.ReadFullFrom(reader, 1); err != nil {
-			return nil, nil, false, newError("failed to read request command").Base(err)
+			return nil, nil, false, errors.New("failed to read request command").Base(err)
 		}
 
 		request.Command = protocol.RequestCommand(buffer.Byte(0))
@@ -126,11 +125,11 @@ func DecodeRequestHeader(isfb bool, first *buf.Buffer, reader io.Reader, validat
 			}
 		}
 		if request.Address == nil {
-			return nil, nil, false, newError("invalid request address")
+			return nil, nil, false, errors.New("invalid request address")
 		}
 		return request, requestAddons, false, nil
 	default:
-		return nil, nil, isfb, newError("invalid request version")
+		return nil, nil, isfb, errors.New("invalid request version")
 	}
 }
 
@@ -140,15 +139,15 @@ func EncodeResponseHeader(writer io.Writer, request *protocol.RequestHeader, res
 	defer buffer.Release()
 
 	if err := buffer.WriteByte(request.Version); err != nil {
-		return newError("failed to write response version").Base(err)
+		return errors.New("failed to write response version").Base(err)
 	}
 
 	if err := EncodeHeaderAddons(&buffer, responseAddons); err != nil {
-		return newError("failed to encode response header addons").Base(err)
+		return errors.New("failed to encode response header addons").Base(err)
 	}
 
 	if _, err := writer.Write(buffer.Bytes()); err != nil {
-		return newError("failed to write response header").Base(err)
+		return errors.New("failed to write response header").Base(err)
 	}
 
 	return nil
@@ -160,35 +159,35 @@ func DecodeResponseHeader(reader io.Reader, request *protocol.RequestHeader) (*A
 	defer buffer.Release()
 
 	if _, err := buffer.ReadFullFrom(reader, 1); err != nil {
-		return nil, newError("failed to read response version").Base(err)
+		return nil, errors.New("failed to read response version").Base(err)
 	}
 
 	if buffer.Byte(0) != request.Version {
-		return nil, newError("unexpected response version. Expecting ", int(request.Version), " but actually ", int(buffer.Byte(0)))
+		return nil, errors.New("unexpected response version. Expecting ", int(request.Version), " but actually ", int(buffer.Byte(0)))
 	}
 
 	responseAddons, err := DecodeHeaderAddons(&buffer, reader)
 	if err != nil {
-		return nil, newError("failed to decode response header addons").Base(err)
+		return nil, errors.New("failed to decode response header addons").Base(err)
 	}
 
 	return responseAddons, nil
 }
 
 // XtlsRead filter and read xtls protocol
-func XtlsRead(reader buf.Reader, writer buf.Writer, timer *signal.ActivityTimer, conn net.Conn, input *bytes.Reader, rawInput *bytes.Buffer, trafficState *proxy.TrafficState, ob *session.Outbound, ctx context.Context) error {
+func XtlsRead(reader buf.Reader, writer buf.Writer, timer *signal.ActivityTimer, conn net.Conn, input *bytes.Reader, rawInput *bytes.Buffer, trafficState *proxy.TrafficState, ob *session.Outbound, isUplink bool, ctx context.Context) error {
 	err := func() error {
 		for {
-			if trafficState.ReaderSwitchToDirectCopy {
+			if isUplink && trafficState.Inbound.UplinkReaderDirectCopy || !isUplink && trafficState.Outbound.DownlinkReaderDirectCopy {
 				var writerConn net.Conn
 				var inTimer *signal.ActivityTimer
 				if inbound := session.InboundFromContext(ctx); inbound != nil && inbound.Conn != nil {
 					writerConn = inbound.Conn
 					inTimer = inbound.Timer
-					if inbound.CanSpliceCopy == 2 {
+					if isUplink && inbound.CanSpliceCopy == 2 {
 						inbound.CanSpliceCopy = 1
 					}
-					if ob != nil && ob.CanSpliceCopy == 2 { // ob need to be passed in due to context can change
+					if !isUplink && ob != nil && ob.CanSpliceCopy == 2 { // ob need to be passed in due to context can change
 						ob.CanSpliceCopy = 1
 					}
 				}
@@ -197,7 +196,7 @@ func XtlsRead(reader buf.Reader, writer buf.Writer, timer *signal.ActivityTimer,
 			buffer, err := reader.ReadMultiBuffer()
 			if !buffer.IsEmpty() {
 				timer.Update()
-				if trafficState.ReaderSwitchToDirectCopy {
+				if isUplink && trafficState.Inbound.UplinkReaderDirectCopy || !isUplink && trafficState.Outbound.DownlinkReaderDirectCopy {
 					// XTLS Vision processes struct TLS Conn's input and rawInput
 					if inputBuffer, err := buf.ReadFrom(input); err == nil {
 						if !inputBuffer.IsEmpty() {
@@ -226,24 +225,28 @@ func XtlsRead(reader buf.Reader, writer buf.Writer, timer *signal.ActivityTimer,
 }
 
 // XtlsWrite filter and write xtls protocol
-func XtlsWrite(reader buf.Reader, writer buf.Writer, timer signal.ActivityUpdater, conn net.Conn, trafficState *proxy.TrafficState, ob *session.Outbound, ctx context.Context) error {
+func XtlsWrite(reader buf.Reader, writer buf.Writer, timer signal.ActivityUpdater, conn net.Conn, trafficState *proxy.TrafficState, ob *session.Outbound, isUplink bool, ctx context.Context) error {
 	err := func() error {
 		var ct stats.Counter
 		for {
 			buffer, err := reader.ReadMultiBuffer()
-			if trafficState.WriterSwitchToDirectCopy {
+			if isUplink && trafficState.Outbound.UplinkWriterDirectCopy || !isUplink && trafficState.Inbound.DownlinkWriterDirectCopy {
 				if inbound := session.InboundFromContext(ctx); inbound != nil {
-					if inbound.CanSpliceCopy == 2 {
+					if !isUplink && inbound.CanSpliceCopy == 2 {
 						inbound.CanSpliceCopy = 1
 					}
-					if ob != nil && ob.CanSpliceCopy == 2 {
+					if isUplink && ob != nil && ob.CanSpliceCopy == 2 {
 						ob.CanSpliceCopy = 1
 					}
 				}
 				rawConn, _, writerCounter := proxy.UnwrapRawConn(conn)
 				writer = buf.NewWriter(rawConn)
 				ct = writerCounter
-				trafficState.WriterSwitchToDirectCopy = false
+				if isUplink {
+					trafficState.Outbound.UplinkWriterDirectCopy = false
+				} else {
+					trafficState.Inbound.DownlinkWriterDirectCopy = false
+				}
 			}
 			if !buffer.IsEmpty() {
 				if ct != nil {

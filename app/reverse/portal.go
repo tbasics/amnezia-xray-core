@@ -7,8 +7,10 @@ import (
 
 	"github.com/amnezia-vpn/amnezia-xray-core/common"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/buf"
+	"github.com/amnezia-vpn/amnezia-xray-core/common/errors"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/mux"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/net"
+	"github.com/amnezia-vpn/amnezia-xray-core/common/serial"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/session"
 	"github.com/amnezia-vpn/amnezia-xray-core/common/task"
 	"github.com/amnezia-vpn/amnezia-xray-core/features/outbound"
@@ -27,11 +29,11 @@ type Portal struct {
 
 func NewPortal(config *PortalConfig, ohm outbound.Manager) (*Portal, error) {
 	if config.Tag == "" {
-		return nil, newError("portal tag is empty")
+		return nil, errors.New("portal tag is empty")
 	}
 
 	if config.Domain == "" {
-		return nil, newError("portal domain is empty")
+		return nil, errors.New("portal domain is empty")
 	}
 
 	picker, err := NewStaticMuxPicker()
@@ -65,18 +67,18 @@ func (p *Portal) HandleConnection(ctx context.Context, link *transport.Link) err
 	outbounds := session.OutboundsFromContext(ctx)
 	ob := outbounds[len(outbounds)-1]
 	if ob == nil {
-		return newError("outbound metadata not found").AtError()
+		return errors.New("outbound metadata not found").AtError()
 	}
 
 	if isDomain(ob.Target, p.domain) {
 		muxClient, err := mux.NewClientWorker(*link, mux.ClientStrategy{})
 		if err != nil {
-			return newError("failed to create mux client worker").Base(err).AtWarning()
+			return errors.New("failed to create mux client worker").Base(err).AtWarning()
 		}
 
 		worker, err := NewPortalWorker(muxClient)
 		if err != nil {
-			return newError("failed to create portal worker").Base(err)
+			return errors.New("failed to create portal worker").Base(err)
 		}
 
 		p.picker.AddWorker(worker)
@@ -97,7 +99,7 @@ func (o *Outbound) Tag() string {
 
 func (o *Outbound) Dispatch(ctx context.Context, link *transport.Link) {
 	if err := o.portal.HandleConnection(ctx, link); err != nil {
-		newError("failed to process reverse connection").Base(err).WriteToLog(session.ExportIDToError(ctx))
+		errors.LogInfoInner(ctx, err, "failed to process reverse connection")
 		common.Interrupt(link.Writer)
 	}
 }
@@ -107,6 +109,16 @@ func (o *Outbound) Start() error {
 }
 
 func (o *Outbound) Close() error {
+	return nil
+}
+
+// SenderSettings implements outbound.Handler.
+func (o *Outbound) SenderSettings() *serial.TypedMessage {
+	return nil
+}
+
+// ProxySettings implements outbound.Handler.
+func (o *Outbound) ProxySettings() *serial.TypedMessage {
 	return nil
 }
 
@@ -149,7 +161,7 @@ func (p *StaticMuxPicker) PickAvailable() (*mux.ClientWorker, error) {
 	defer p.access.Unlock()
 
 	if len(p.workers) == 0 {
-		return nil, newError("empty worker list")
+		return nil, errors.New("empty worker list")
 	}
 
 	var minIdx int = -1
@@ -183,7 +195,7 @@ func (p *StaticMuxPicker) PickAvailable() (*mux.ClientWorker, error) {
 		return p.workers[minIdx].client, nil
 	}
 
-	return nil, newError("no mux client worker available")
+	return nil, errors.New("no mux client worker available")
 }
 
 func (p *StaticMuxPicker) AddWorker(worker *PortalWorker) {
@@ -216,7 +228,7 @@ func NewPortalWorker(client *mux.ClientWorker) (*PortalWorker, error) {
 		Writer: downlinkWriter,
 	})
 	if !f {
-		return nil, newError("unable to dispatch control connection")
+		return nil, errors.New("unable to dispatch control connection")
 	}
 	w := &PortalWorker{
 		client: client,
@@ -233,11 +245,11 @@ func NewPortalWorker(client *mux.ClientWorker) (*PortalWorker, error) {
 
 func (w *PortalWorker) heartbeat() error {
 	if w.client.Closed() {
-		return newError("client worker stopped")
+		return errors.New("client worker stopped")
 	}
 
 	if w.draining || w.writer == nil {
-		return newError("already disposed")
+		return errors.New("already disposed")
 	}
 
 	msg := &Control{}

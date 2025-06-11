@@ -2,6 +2,7 @@ package dns
 
 import (
 	"context"
+	go_errors "errors"
 	"io"
 	"sync"
 	"time"
@@ -27,7 +28,7 @@ func init() {
 	common.Must(common.RegisterConfig((*Config)(nil), func(ctx context.Context, config interface{}) (interface{}, error) {
 		h := new(Handler)
 		if err := core.RequireFeatures(ctx, func(dnsClient dns.Client, policyManager policy.Manager) error {
-			core.RequireFeatures(ctx, func(fdns dns.FakeDNSEngine) {
+			core.OptionalFeatures(ctx, func(fdns dns.FakeDNSEngine) {
 				h.fdns = fdns
 			})
 			return h.Init(config.(*Config), dnsClient, policyManager)
@@ -49,6 +50,7 @@ type Handler struct {
 	server          net.Destination
 	timeout         time.Duration
 	nonIPQuery      string
+	blockTypes      []int32
 }
 
 func (h *Handler) Init(config *Config, dnsClient dns.Client, policyManager policy.Manager) error {
@@ -63,6 +65,7 @@ func (h *Handler) Init(config *Config, dnsClient dns.Client, policyManager polic
 		h.server = config.Server.AsDestination()
 	}
 	h.nonIPQuery = config.Non_IPQuery
+	h.blockTypes = config.BlockTypes
 	return nil
 }
 
@@ -74,22 +77,22 @@ func parseIPQuery(b []byte) (r bool, domain string, id uint16, qType dnsmessage.
 	var parser dnsmessage.Parser
 	header, err := parser.Start(b)
 	if err != nil {
-		newError("parser start").Base(err).WriteToLog()
+		errors.LogInfoInner(context.Background(), err, "parser start")
 		return
 	}
 
 	id = header.ID
 	q, err := parser.Question()
 	if err != nil {
-		newError("question").Base(err).WriteToLog()
+		errors.LogInfoInner(context.Background(), err, "question")
 		return
 	}
+	domain = q.Name.String()
 	qType = q.Type
 	if qType != dnsmessage.TypeA && qType != dnsmessage.TypeAAAA {
 		return
 	}
 
-	domain = q.Name.String()
 	r = true
 	return
 }
@@ -99,7 +102,7 @@ func (h *Handler) Process(ctx context.Context, link *transport.Link, d internet.
 	outbounds := session.OutboundsFromContext(ctx)
 	ob := outbounds[len(outbounds)-1]
 	if !ob.Target.IsValid() {
-		return newError("invalid outbound")
+		return errors.New("invalid outbound")
 	}
 	ob.Name = "dns"
 
@@ -116,7 +119,7 @@ func (h *Handler) Process(ctx context.Context, link *transport.Link, d internet.
 		dest.Port = h.server.Port
 	}
 
-	newError("handling DNS traffic to ", dest).WriteToLog(session.ExportIDToError(ctx))
+	errors.LogInfo(ctx, "handling DNS traffic to ", dest)
 
 	conn := &outboundConn{
 		dialer: func() (stat.Connection, error) {
@@ -181,10 +184,18 @@ func (h *Handler) Process(ctx context.Context, link *transport.Link, d internet.
 
 			if !h.isOwnLink(ctx) {
 				isIPQuery, domain, id, qType := parseIPQuery(b.Bytes())
+				if len(h.blockTypes) > 0 {
+					for _, blocktype := range h.blockTypes {
+						if blocktype == int32(qType) {
+							errors.LogInfo(ctx, "blocked type ", qType, " query for domain ", domain)
+							return nil
+						}
+					}
+				}
 				if isIPQuery {
 					go h.handleIPQuery(id, qType, domain, writer)
 				}
-				if isIPQuery || h.nonIPQuery == "drop" || qType == 65 {
+				if isIPQuery || h.nonIPQuery == "drop" {
 					b.Release()
 					continue
 				}
@@ -216,7 +227,7 @@ func (h *Handler) Process(ctx context.Context, link *transport.Link, d internet.
 	}
 
 	if err := task.Run(ctx, request, response); err != nil {
-		return newError("connection ends").Base(err)
+		return errors.New("connection ends").Base(err)
 	}
 
 	return nil
@@ -226,17 +237,18 @@ func (h *Handler) handleIPQuery(id uint16, qType dnsmessage.Type, domain string,
 	var ips []net.IP
 	var err error
 
-	var ttl uint32 = 600
+	var ttl4 uint32
+	var ttl6 uint32
 
 	switch qType {
 	case dnsmessage.TypeA:
-		ips, err = h.client.LookupIP(domain, dns.IPOption{
+		ips, ttl4, err = h.client.LookupIP(domain, dns.IPOption{
 			IPv4Enable: true,
 			IPv6Enable: false,
 			FakeEnable: true,
 		})
 	case dnsmessage.TypeAAAA:
-		ips, err = h.client.LookupIP(domain, dns.IPOption{
+		ips, ttl6, err = h.client.LookupIP(domain, dns.IPOption{
 			IPv4Enable: false,
 			IPv6Enable: true,
 			FakeEnable: true,
@@ -244,13 +256,9 @@ func (h *Handler) handleIPQuery(id uint16, qType dnsmessage.Type, domain string,
 	}
 
 	rcode := dns.RCodeFromError(err)
-	if rcode == 0 && len(ips) == 0 && !errors.AllEqual(dns.ErrEmptyResponse, errors.Cause(err)) {
-		newError("ip query").Base(err).WriteToLog()
+	if rcode == 0 && len(ips) == 0 && !go_errors.Is(err, dns.ErrEmptyResponse) {
+		errors.LogInfoInner(context.Background(), err, "ip query")
 		return
-	}
-
-	if fkr0, ok := h.fdns.(dns.FakeDNSEngineRev0); ok && len(ips) > 0 && fkr0.IsIPInIPPool(net.IPAddress(ips[0])) {
-		ttl = 1
 	}
 
 	switch qType {
@@ -283,28 +291,29 @@ func (h *Handler) handleIPQuery(id uint16, qType dnsmessage.Type, domain string,
 	}))
 	common.Must(builder.StartAnswers())
 
-	rHeader := dnsmessage.ResourceHeader{Name: dnsmessage.MustNewName(domain), Class: dnsmessage.ClassINET, TTL: ttl}
+	rHeader4 := dnsmessage.ResourceHeader{Name: dnsmessage.MustNewName(domain), Class: dnsmessage.ClassINET, TTL: ttl4}
+	rHeader6 := dnsmessage.ResourceHeader{Name: dnsmessage.MustNewName(domain), Class: dnsmessage.ClassINET, TTL: ttl6}
 	for _, ip := range ips {
 		if len(ip) == net.IPv4len {
 			var r dnsmessage.AResource
 			copy(r.A[:], ip)
-			common.Must(builder.AResource(rHeader, r))
+			common.Must(builder.AResource(rHeader4, r))
 		} else {
 			var r dnsmessage.AAAAResource
 			copy(r.AAAA[:], ip)
-			common.Must(builder.AAAAResource(rHeader, r))
+			common.Must(builder.AAAAResource(rHeader6, r))
 		}
 	}
 	msgBytes, err := builder.Finish()
 	if err != nil {
-		newError("pack message").Base(err).WriteToLog()
+		errors.LogInfoInner(context.Background(), err, "pack message")
 		b.Release()
 		return
 	}
 	b.Resize(0, int32(len(msgBytes)))
 
 	if err := writer.WriteMessage(b); err != nil {
-		newError("write IP answer").Base(err).WriteToLog()
+		errors.LogInfoInner(context.Background(), err, "write IP answer")
 	}
 }
 
@@ -332,7 +341,7 @@ func (c *outboundConn) Write(b []byte) (int, error) {
 	if c.conn == nil {
 		if err := c.dial(); err != nil {
 			c.access.Unlock()
-			newError("failed to dial outbound connection").Base(err).AtWarning().WriteToLog()
+			errors.LogWarningInner(context.Background(), err, "failed to dial outbound connection")
 			return len(b), nil
 		}
 	}
