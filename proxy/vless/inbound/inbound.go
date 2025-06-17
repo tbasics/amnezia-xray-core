@@ -90,6 +90,8 @@ func New(ctx context.Context, config *Config, dc dns.Client, validator vless.Val
 		policyManager:         v.GetFeature(policy.ManagerType()).(policy.Manager),
 		dns:                   dc,
 		validator:             validator,
+		clientConnections:     make(map[net.Conn]struct{}),
+		notifiedInvalidIds:    make(map[string]time.Time),
 	}
 
 	if config.Fallbacks != nil {
